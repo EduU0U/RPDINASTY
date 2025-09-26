@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password_hash String
+  nick          String
+  avatar_url    String?
+  role          String    @default("member") // admin, moderator, member
+  created_at    DateTime  @default(now())
+  characters    Character[]
+  messages      Message[] @relation("userMessages")
+}
+
+model Character {
+  id               String   @id @default(cuid())
+  user             User     @relation(fields: [userId], references: [id])
+  userId           String
+  chatId           String? 
+  name             String
+  bio              String?
+  avatar_url       String?
+  powers           Json     @default("[]")
+  items            Json     @default("[]")
+  weapons          Json     @default("[]")
+  xp               Int      @default(0)
+  created_at       DateTime @default(now())
+  messages         Message[] @relation("characterMessages")
+}
+
+model Chat {
+  id         String    @id @default(cuid())
+  name       String
+  type       String    // off|rpg|guild|private
+  image_url  String?
+  lore_text  String?
+  is_private Boolean   @default(false)
+  created_at DateTime  @default(now())
+  messages   Message[]
+  events     Event[]
+  guild      Guild?    @relation(fields: [guildId], references: [id])
+  guildId    String?
+}
+
+model Guild {
+  id         String   @id @default(cuid())
+  name       String
+  tag        String
+  lore       String?
+  leader_ids Json     @default("[]") // array of user ids (3 slots)
+  chat       Chat?    @relation(fields: [chatId], references: [id])
+  chatId     String?
+  created_at DateTime @default(now())
+}
+
+model Message {
+  id                  String   @id @default(cuid())
+  chat                Chat     @relation(fields: [chatId], references: [id])
+  chatId              String
+  sender_user         User     @relation("userMessages", fields: [senderUserId], references: [id])
+  senderUserId        String
+  sender_character    Character? @relation("characterMessages", fields: [senderCharacterId], references: [id])
+  senderCharacterId   String?
+  content             String
+  type                String   @default("text") // text|system|command
+  created_at          DateTime @default(now())
+}
+
+model Event {
+  id         String   @id @default(cuid())
+  chat       Chat     @relation(fields: [chatId], references: [id])
+  chatId     String
+  title      String
+  description String?
+  active_until DateTime?
+  created_by  String
+  created_at DateTime @default(now())
+}
+
+model Item {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  rarity      String
+  created_at  DateTime @default(now())
+}
