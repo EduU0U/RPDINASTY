@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Criativo</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  header {
+    padding: 1rem;
+    background: rgba(0,0,0,0.3);
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  #users {
+    width: 200px;
+    background: rgba(0,0,0,0.2);
+    padding: 1rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+
+  #users h3 {
+    margin-top: 0;
+  }
+
+  #users ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  #users li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+  }
+
+  #chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0,0,0,0.1);
+  }
+
+  #messages {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+
+  .message {
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    max-width: 60%;
+  }
+
+  .message.me {
+    background: #4caf50;
+    align-self: flex-end;
+  }
+
+  form {
+    display: flex;
+    padding: 0.5rem;
+    background: rgba(0,0,0,0.3);
+  }
+
+  input[type="text"] {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 20px;
+    outline: none;
+  }
+
+  button {
+    margin-left: 0.5rem;
+    padding: 0 1rem;
+    border: none;
+    border-radius: 20px;
+    background: #ff9800;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #e68900;
+  }
+</style>
+</head>
+<body>
+
+<header>💬 Chat Criativo</header>
+
+<main>
+  <div id="users">
+    <h3>Usuários Online</h3>
+    <ul id="userList">
+      <li>Alice</li>
+      <li>Bob</li>
+      <li>Charlie</li>
+    </ul>
+  </div>
+
+  <div id="chat">
+    <div id="messages"></div>
+    <form id="chatForm">
+      <input type="text" id="messageInput" placeholder="Digite sua mensagem..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+</main>
+
+<script>
+const form = document.getElementById('chatForm');
+const input = document.getElementById('messageInput');
+const messages = document.getElementById('messages');
+
+// Função para adicionar mensagens
+function addMessage(text, isMe = false) {
+  const msg = document.createElement('div');
+  msg.classList.add('message');
+  if(isMe) msg.classList.add('me');
+  msg.textContent = text;
+  messages.appendChild(msg);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+// Simular algumas mensagens automáticas
+const autoMessages = [
+  "Bem-vindo ao chat!",
+  "Aqui você pode conversar com amigos fictícios.",
+  "Experimente digitar algo."
+];
+
+let i = 0;
+setInterval(() => {
+  if(i < autoMessages.length) {
+    addMessage(autoMessages[i]);
+    i++;
+  }
+}, 1500);
+
+// Enviar mensagem do usuário
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const text = input.value.trim();
+  if(text) {
+    addMessage(text, true);
+    input.value = '';
+    // Resposta automática divertida
+    setTimeout(() => {
+      addMessage("🤖 Resposta automática para: " + text);
+    }, 1000);
+  }
+});
+</script>
+
+</body>
+</html>
